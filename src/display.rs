@@ -19,13 +19,6 @@
 #![allow(dead_code)]
 
 // -------------------------------------------------------------------------------------------------
-// DEPENDENCIES
-// -------------------------------------------------------------------------------------------------
-
-// system
-use libc::uint32_t;
-
-// -------------------------------------------------------------------------------------------------
 // TYPES
 // -------------------------------------------------------------------------------------------------
 
@@ -77,15 +70,15 @@ pub enum VCOSInputFormat {
 
 pub struct Info {
    pub type_:            Interface,
-   pub width:            uint32_t,
-   pub height:           uint32_t,
+   pub width:            u32,
+   pub height:           u32,
    pub input_format:     InputFormat,
-   pub interlaced:       uint32_t,
+   pub interlaced:       u32,
    pub output_dither:    Dither,
-   pub pixel_freq:       uint32_t,
-   pub line_rate:        uint32_t,
+   pub pixel_freq:       u32,
+   pub line_rate:        u32,
    pub format_3d:        _3dFormat,
-   pub use_pixelvalve_1: uint32_t,
-   pub dsi_video_mode:   uint32_t,
-   pub hvs_channel:      uint32_t
+   pub use_pixelvalve_1: u32,
+   pub dsi_video_mode:   u32,
+   pub hvs_channel:      u32
 }

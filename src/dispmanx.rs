@@ -23,34 +23,30 @@
 // -------------------------------------------------------------------------------------------------
 
 // system
-use libc::{ c_int,
-            c_void,
-            int32_t,
-            uint8_t,
-            uint32_t };
+use std::ffi::c_void;
 
 // local
-use display::{ _3dFormat,
+use crate::display::{ _3dFormat,
                Info,
                InputFormat };
 
-use image::{ Image,
+use crate::image::{ Image,
              ImageType,
              Rect };
 
-use vchi::MemHandle;
+use crate::vchi::MemHandle;
 
 // -------------------------------------------------------------------------------------------------
 // TYPES
 // -------------------------------------------------------------------------------------------------
 
-pub type DisplayHandle  = uint32_t;
-pub type ElementHandle  = uint32_t;
-pub type ResourceHandle = uint32_t;
-pub type UpdateHandle   = uint32_t;
+pub type DisplayHandle  = u32;
+pub type ElementHandle  = u32;
+pub type ResourceHandle = u32;
+pub type UpdateHandle   = u32;
 
 pub type CallbackFunc = extern "C" fn(handle: UpdateHandle, arg: *mut c_void);
-pub type Protection   = uint32_t;
+pub type Protection   = u32;
 
 // -------------------------------------------------------------------------------------------------
 // ENUMS
@@ -116,7 +112,7 @@ pub enum Transform {
 #[repr(C)]
 pub struct Alpha {
     pub flags:   FlagsAlpha,
-    pub opacity: uint32_t,
+    pub opacity: u32,
     pub mask:    Image
 }
 
@@ -125,67 +121,67 @@ pub struct Clamp {
     pub mode:          FlagsClamp,
     pub key_mask:      FlagsKeymask,
     pub key_value:     *mut c_void,
-    pub replace_value: uint32_t
+    pub replace_value: u32
 }
 
 #[repr(C)]
 pub struct ClampKeysRGB {
-    pub red_upper:   uint8_t,
-    pub red_lower:   uint8_t,
-    pub blue_upper:  uint8_t,
-    pub blue_lower:  uint8_t,
-    pub green_upper: uint8_t,
-    pub green_lower: uint8_t
+    pub red_upper:   u8,
+    pub red_lower:   u8,
+    pub blue_upper:  u8,
+    pub blue_lower:  u8,
+    pub green_upper: u8,
+    pub green_lower: u8
 }
 
 #[repr(C)]
 pub struct ClampKeysYUV {
-    pub yy_upper: uint8_t,
-    pub yy_lower: uint8_t,
-    pub cr_upper: uint8_t,
-    pub cr_lower: uint8_t,
-    pub cb_upper: uint8_t,
-    pub cb_lower: uint8_t
+    pub yy_upper: u8,
+    pub yy_lower: u8,
+    pub cr_upper: u8,
+    pub cr_lower: u8,
+    pub cb_upper: u8,
+    pub cb_lower: u8
 }
 
 #[repr(C)]
 pub struct DisplayFuncs {
-    pub get_hvs_config: extern "C" fn(instance: *mut c_void, pchan: *mut uint32_t,
-                                      poptions: *mut uint32_t, info: *mut Info,
-                                      bg_color: *mut uint32_t, test_mode: *mut uint32_t),
+    pub get_hvs_config: extern "C" fn(instance: *mut c_void, pchan: *mut u32,
+                                      poptions: *mut u32, info: *mut Info,
+                                      bg_color: *mut u32, test_mode: *mut u32),
 
     pub get_gamma_params: extern "C" fn(instance: *mut c_void,
-                                        gain: [int32_t; 3], offset: [int32_t; 3],
-                                        gamma: [int32_t; 3]),
+                                        gain: [i32; 3], offset: [i32; 3],
+                                        gamma: [i32; 3]),
 
-    pub get_oled_params: extern "C" fn(instance: *mut c_void, poffsets: *mut uint32_t,
-                                       coeffs: [uint32_t; 3]) -> int32_t,
+    pub get_oled_params: extern "C" fn(instance: *mut c_void, poffsets: *mut u32,
+                                       coeffs: [u32; 3]) -> i32,
 
-    pub get_dither: extern "C" fn(instance: *mut c_void, dither_depth: *mut uint32_t,
-                                  dither_type: *mut uint32_t) -> int32_t,
+    pub get_dither: extern "C" fn(instance: *mut c_void, dither_depth: *mut u32,
+                                  dither_type: *mut u32) -> i32,
 
-    pub get_info: extern "C" fn(instance: *mut c_void, info: *mut Modeinfo) -> int32_t,
+    pub get_info: extern "C" fn(instance: *mut c_void, info: *mut Modeinfo) -> i32,
 
-    pub open: extern "C" fn(instance: *mut c_void) -> int32_t,
+    pub open: extern "C" fn(instance: *mut c_void) -> i32,
 
-    pub close: extern "C" fn(instance: *mut c_void) -> int32_t,
+    pub close: extern "C" fn(instance: *mut c_void) -> i32,
 
     // todo: fifo_reg should be volatile
-    pub dlist_updated: extern "C" fn(instance: *mut c_void, fifo_reg: *mut uint32_t),
+    pub dlist_updated: extern "C" fn(instance: *mut c_void, fifo_reg: *mut u32),
 
     pub eof_callback: extern "C" fn(instance: *mut c_void),
 
     pub get_input_format: extern "C" fn(instance: *mut c_void) -> InputFormat,
 
-    pub suspend_resume: extern "C" fn(instance: *mut c_void, up: int32_t) -> int32_t,
+    pub suspend_resume: extern "C" fn(instance: *mut c_void, up: i32) -> i32,
 
     pub get_3d_format: extern "C" fn(instance: *mut c_void) -> _3dFormat
 }
 
 #[repr(C)]
 pub struct Modeinfo {
-    pub width:        int32_t,
-    pub height:       int32_t,
+    pub width:        i32,
+    pub height:       i32,
     pub transform:    Transform,
     pub input_format: InputFormat
 }
@@ -193,33 +189,33 @@ pub struct Modeinfo {
 #[repr(C)]
 pub struct VCAlpha {
     pub flags:   FlagsAlpha,
-    pub opacity: uint32_t,
+    pub opacity: u32,
     pub mask:    ResourceHandle
 }
 
 #[repr(C)]
 pub struct Window {
     pub element: ElementHandle,
-    pub width:   c_int,
-    pub height:  c_int
+    pub width:   i32,
+    pub height:  i32
 }
 
 // -------------------------------------------------------------------------------------------------
 // CONSTANTS
 // -------------------------------------------------------------------------------------------------
 
-pub const DISPMANX_NO_HANDLE:       uint32_t = 0;
-pub const DISPMANX_PROTECTION_MAX:  uint32_t = 0x0f;
-pub const DISPMANX_PROTECTION_NONE: uint32_t = 0;
-pub const DISPMANX_PROTECTION_HDCP: uint32_t = 11; // derived from the WM DRM levels, 101-300
+pub const DISPMANX_NO_HANDLE:       u32 = 0;
+pub const DISPMANX_PROTECTION_MAX:  u32 = 0x0f;
+pub const DISPMANX_PROTECTION_NONE: u32 = 0;
+pub const DISPMANX_PROTECTION_HDCP: u32 = 11; // derived from the WM DRM levels, 101-300
 
-pub const DISPMANX_ID_MAIN_LCD:    uint32_t = 0;
-pub const DISPMANX_ID_AUX_LCD:     uint32_t = 1;
-pub const DISPMANX_ID_HDMI:        uint32_t = 2;
-pub const DISPMANX_ID_SDTV:        uint32_t = 3;
-pub const DISPMANX_ID_FORCE_LCD:   uint32_t = 4;
-pub const DISPMANX_ID_FORCE_TV:    uint32_t = 5;
-pub const DISPMANX_ID_FORCE_OTHER: uint32_t = 6; // non-default display
+pub const DISPMANX_ID_MAIN_LCD:    u32 = 0;
+pub const DISPMANX_ID_AUX_LCD:     u32 = 1;
+pub const DISPMANX_ID_HDMI:        u32 = 2;
+pub const DISPMANX_ID_SDTV:        u32 = 3;
+pub const DISPMANX_ID_FORCE_LCD:   u32 = 4;
+pub const DISPMANX_ID_FORCE_TV:    u32 = 5;
+pub const DISPMANX_ID_FORCE_OTHER: u32 = 6; // non-default display
 
 // -------------------------------------------------------------------------------------------------
 // FUNCTIONS
@@ -237,13 +233,13 @@ pub fn display_get_info(display: DisplayHandle, modeinfo: *mut Modeinfo) -> bool
     }
 }
 
-pub fn display_open(device: uint32_t) -> DisplayHandle {
+pub fn display_open(device: u32) -> DisplayHandle {
     unsafe {
         ffi::vc_dispmanx_display_open(device)
     }
 }
 
-pub fn display_open_mode(device: uint32_t, mode: uint32_t) -> DisplayHandle {
+pub fn display_open_mode(device: u32, mode: u32) -> DisplayHandle {
     unsafe {
         ffi::vc_dispmanx_display_open_mode(device, mode)
     }
@@ -255,14 +251,14 @@ pub fn display_open_offscreen(dest: ResourceHandle, orientation: Transform) -> D
     }
 }
 
-pub fn display_reconfigure(display: DisplayHandle, mode: uint32_t) -> bool {
+pub fn display_reconfigure(display: DisplayHandle, mode: u32) -> bool {
     unsafe {
         ffi::vc_dispmanx_display_reconfigure(display, mode) > 0
     }
 }
 
 pub fn display_set_background(update: UpdateHandle, display: DisplayHandle,
-                              red: uint8_t, green: uint8_t, blue: uint8_t) -> bool {
+                              red: u8, green: u8, blue: u8) -> bool {
     unsafe {
         ffi::vc_dispmanx_display_set_background(update, display, red, green, blue) > 0
     }
@@ -274,7 +270,7 @@ pub fn display_set_destination(display: DisplayHandle, dest: ResourceHandle) -> 
     }
 }
 
-pub fn element_add(update: UpdateHandle, display: DisplayHandle, layer: int32_t,
+pub fn element_add(update: UpdateHandle, display: DisplayHandle, layer: i32,
                    dest_rect: *mut Rect, src: ResourceHandle, src_rect: *mut Rect,
                    protection: Protection, alpha: *mut VCAlpha, clamp: *mut Clamp,
                    transform: Transform) -> ElementHandle {
@@ -285,7 +281,7 @@ pub fn element_add(update: UpdateHandle, display: DisplayHandle, layer: int32_t,
 }
 
 pub fn element_change_attributes(update: UpdateHandle, element: ElementHandle,
-                                 change_flags: uint32_t, layer: int32_t, opacity: uint8_t,
+                                 change_flags: u32, layer: i32, opacity: u8,
                                  dest_rect: *const Rect, src_rect: *const Rect,
                                  mask: ResourceHandle, transform: Transform) -> bool {
     unsafe {
@@ -296,7 +292,7 @@ pub fn element_change_attributes(update: UpdateHandle, element: ElementHandle,
 }
 
 pub fn element_change_layer(update: UpdateHandle, element: ElementHandle,
-                            layer: int32_t) -> bool {
+                            layer: i32) -> bool {
     unsafe {
         ffi::vc_dispmanx_element_change_layer(update, element, layer) > 0
     }
@@ -321,21 +317,21 @@ pub fn element_remove(update: UpdateHandle, element: ElementHandle) -> bool {
     }
 }
 
-pub fn query_image_formats(supported_formats: *mut uint32_t) -> bool {
+pub fn query_image_formats(supported_formats: *mut u32) -> bool {
     unsafe {
         ffi::vc_dispmanx_query_image_formats(supported_formats) > 0
     }
 }
 
-pub fn rect_set(rect: *mut Rect, x_offset: uint32_t, y_offset: uint32_t, width: uint32_t,
-                height: uint32_t) -> bool {
+pub fn rect_set(rect: *mut Rect, x_offset: u32, y_offset: u32, width: u32,
+                height: u32) -> bool {
     unsafe {
         ffi::vc_dispmanx_rect_set(rect, x_offset, y_offset, width, height) > 0
     }
 }
 
-pub fn resource_create(type_: ImageType, width: uint32_t, height: uint32_t,
-                       native_image_handle: *mut uint32_t) -> ResourceHandle {
+pub fn resource_create(type_: ImageType, width: u32, height: u32,
+                       native_image_handle: *mut u32) -> ResourceHandle {
     unsafe {
         ffi::vc_dispmanx_resource_create(type_, width, height, native_image_handle)
     }
@@ -348,28 +344,28 @@ pub fn resource_delete(res: ResourceHandle) -> bool {
 }
 
 pub fn resource_read_data(res: ResourceHandle, rect: *const Rect, dst_address: *mut c_void,
-                          dst_pitch: uint32_t) -> bool {
+                          dst_pitch: u32) -> bool {
     unsafe {
         ffi::vc_dispmanx_resource_read_data(res, rect, dst_address, dst_pitch) > 0
     }
 }
 
-pub fn resource_set_palette(res: ResourceHandle, src_address: *mut c_void, offset: int32_t,
-                            size: int32_t) -> bool {
+pub fn resource_set_palette(res: ResourceHandle, src_address: *mut c_void, offset: i32,
+                            size: i32) -> bool {
     unsafe {
         ffi::vc_dispmanx_resource_set_palette(res, src_address, offset, size) > 0
     }
 }
 
-pub fn resource_write_data(res: ResourceHandle, src_type: ImageType, src_pitch: int32_t,
+pub fn resource_write_data(res: ResourceHandle, src_type: ImageType, src_pitch: i32,
                            src_address: *mut c_void, rect: *const Rect) -> bool {
     unsafe {
         ffi::vc_dispmanx_resource_write_data(res, src_type, src_pitch, src_address, rect) > 0
     }
 }
 
-pub fn resource_write_data_handle(res: ResourceHandle, src_type: ImageType, src_pitch: int32_t,
-                                  handle: MemHandle, offset: uint32_t,
+pub fn resource_write_data_handle(res: ResourceHandle, src_type: ImageType, src_pitch: i32,
+                                  handle: MemHandle, offset: u32,
                                   rect: *const Rect) -> bool {
     unsafe {
         ffi::vc_dispmanx_resource_write_data_handle(res, src_type, src_pitch, handle, offset,
@@ -390,7 +386,7 @@ pub fn stop() {
     }
 }
 
-pub fn update_start(priority: int32_t) -> UpdateHandle {
+pub fn update_start(priority: i32) -> UpdateHandle {
     unsafe {
         ffi::vc_dispmanx_update_start(priority)
     }
@@ -421,115 +417,112 @@ pub fn vsync_callback(display: DisplayHandle, callback_func: CallbackFunc,
 // -------------------------------------------------------------------------------------------------
 
 mod ffi {
-    use libc::{ c_void,
-                int32_t,
-                uint8_t,
-                uint32_t };
+    use std::ffi::c_void;
 
-    use image::{ ImageType,
+    use crate::image::{ ImageType,
                  Rect };
 
-    use vchi::MemHandle;
+    use crate::vchi::MemHandle;
 
     use super::*;
 
     extern {
         // deprecated
-        pub fn vc_dispman_init() -> int32_t;
+        pub fn vc_dispman_init() -> i32;
 
-        pub fn vc_dispmanx_display_close(display: DisplayHandle) -> int32_t;
+        pub fn vc_dispmanx_display_close(display: DisplayHandle) -> i32;
 
         pub fn vc_dispmanx_display_get_info(display: DisplayHandle,
-                                            pinfo: *mut Modeinfo) -> int32_t;
+                                            pinfo: *mut Modeinfo) -> i32;
 
-        pub fn vc_dispmanx_display_open(device: uint32_t) -> DisplayHandle;
+        pub fn vc_dispmanx_display_open(device: u32) -> DisplayHandle;
 
-        pub fn vc_dispmanx_display_open_mode(device: uint32_t, mode: uint32_t) -> DisplayHandle;
+        pub fn vc_dispmanx_display_open_mode(device: u32, mode: u32) -> DisplayHandle;
 
         pub fn vc_dispmanx_display_open_offscreen(dest: ResourceHandle,
                                                   orientation: Transform) -> DisplayHandle;
 
-        pub fn vc_dispmanx_display_reconfigure(display: DisplayHandle, mode: uint32_t) -> int32_t;
+        pub fn vc_dispmanx_display_reconfigure(display: DisplayHandle, mode: u32) -> i32;
 
         pub fn vc_dispmanx_display_set_background(update: UpdateHandle,
                                                   display: DisplayHandle,
-                                                  red: uint8_t, green: uint8_t,
-                                                  blue: uint8_t) -> int32_t;
+                                                  red: u8, green: u8,
+                                                  blue: u8) -> i32;
 
         pub fn vc_dispmanx_display_set_destination(display: DisplayHandle,
-                                                   dest: ResourceHandle) -> int32_t;
+                                                   dest: ResourceHandle) -> i32;
 
         pub fn vc_dispmanx_element_add(update: UpdateHandle, display: DisplayHandle,
-                                       layer: int32_t, dest_rect: *mut Rect,
+                                       layer: i32, dest_rect: *mut Rect,
                                        src: ResourceHandle, src_rect: *mut Rect,
                                        protection: Protection, alpha: *mut VCAlpha,
                                        clamp: *mut Clamp, transform: Transform) -> ElementHandle;
 
         pub fn vc_dispmanx_element_change_attributes(update: UpdateHandle,
                                                      element: ElementHandle,
-                                                     change_flags: uint32_t, layer: int32_t,
-                                                     opacity: uint8_t, dest_rect: *const Rect,
+                                                     change_flags: u32, layer: i32,
+                                                     opacity: u8, dest_rect: *const Rect,
                                                      src_rect: *const Rect, mask: ResourceHandle,
-                                                     transform: Transform) -> int32_t;
+                                                     transform: Transform) -> i32;
 
         pub fn vc_dispmanx_element_change_layer(update: UpdateHandle, element: ElementHandle,
-                                                layer: int32_t) -> int32_t;
+                                                layer: i32) -> i32;
 
         pub fn vc_dispmanx_element_change_source(update: UpdateHandle, element: ElementHandle,
-                                                 src: ResourceHandle) -> int32_t;
+                                                 src: ResourceHandle) -> i32;
 
         pub fn vc_dispmanx_element_modified(update: UpdateHandle, element: ElementHandle,
-                                            rect: *mut Rect) -> int32_t;
+                                            rect: *mut Rect) -> i32;
 
-        pub fn vc_dispmanx_element_remove(update: UpdateHandle, element: ElementHandle) -> int32_t;
+        pub fn vc_dispmanx_element_remove(update: UpdateHandle, element: ElementHandle) -> i32;
 
-        pub fn vc_dispmanx_query_image_formats(supported_formats: *mut uint32_t) -> int32_t;
+        pub fn vc_dispmanx_query_image_formats(supported_formats: *mut u32) -> i32;
 
-        pub fn vc_dispmanx_rect_set(rect: *mut Rect, x_offset: uint32_t, y_offset: uint32_t,
-                                    width: uint32_t, height: uint32_t) -> int32_t;
+        pub fn vc_dispmanx_rect_set(rect: *mut Rect, x_offset: u32, y_offset: u32,
+                                    width: u32, height: u32) -> i32;
 
-        pub fn vc_dispmanx_resource_create(type_: ImageType, width: uint32_t, height: uint32_t,
-                                           native_image_handle: *mut uint32_t) -> ResourceHandle;
+        pub fn vc_dispmanx_resource_create(type_: ImageType, width: u32, height: u32,
+                                           native_image_handle: *mut u32) -> ResourceHandle;
 
-        pub fn vc_dispmanx_resource_delete(res: ResourceHandle) -> int32_t;
+        pub fn vc_dispmanx_resource_delete(res: ResourceHandle) -> i32;
 
         // deprecated
-        pub fn vc_dispmanx_resource_get_image_handle(res: ResourceHandle) -> uint32_t;
+        pub fn vc_dispmanx_resource_get_image_handle(res: ResourceHandle) -> u32;
 
         pub fn vc_dispmanx_resource_read_data(handle: ResourceHandle, p_rect: *const Rect,
                                               dst_address: *mut c_void,
-                                              dst_pitch: uint32_t) -> int32_t;
+                                              dst_pitch: u32) -> i32;
 
         pub fn vc_dispmanx_resource_set_palette(handle: ResourceHandle,
-                                                src_address: *mut c_void, offset: int32_t,
-                                                size: int32_t) -> int32_t;
+                                                src_address: *mut c_void, offset: i32,
+                                                size: i32) -> i32;
 
         pub fn vc_dispmanx_resource_write_data(res: ResourceHandle, src_type: ImageType,
-                                               src_pitch: int32_t, src_address: *mut c_void,
-                                               rect: *const Rect) -> int32_t;
+                                               src_pitch: i32, src_address: *mut c_void,
+                                               rect: *const Rect) -> i32;
 
         pub fn vc_dispmanx_resource_write_data_handle(res: ResourceHandle, src_type: ImageType,
-                                                      src_pitch: int32_t, handle: MemHandle,
-                                                      offset: uint32_t,
-                                                      rect: *const Rect) -> int32_t;
+                                                      src_pitch: i32, handle: MemHandle,
+                                                      offset: u32,
+                                                      rect: *const Rect) -> i32;
 
         pub fn vc_dispmanx_snapshot(display: DisplayHandle,
                                     snapshot_resource: ResourceHandle,
-                                    transform: Transform) -> int32_t;
+                                    transform: Transform) -> i32;
 
         pub fn vc_dispmanx_stop();
 
-        pub fn vc_dispmanx_update_start(priority: int32_t) -> UpdateHandle;
+        pub fn vc_dispmanx_update_start(priority: i32) -> UpdateHandle;
 
         pub fn vc_dispmanx_update_submit(update: UpdateHandle, cb_func: CallbackFunc,
-                                         cb_arg: *mut c_void) -> int32_t;
+                                         cb_arg: *mut c_void) -> i32;
 
-        pub fn vc_dispmanx_update_submit_sync(update: UpdateHandle) -> int32_t;
+        pub fn vc_dispmanx_update_submit_sync(update: UpdateHandle) -> i32;
 
         pub fn vc_dispmanx_vsync_callback(display: DisplayHandle, cb_func: CallbackFunc,
-                                          cb_arg: *mut c_void) -> int32_t;
+                                          cb_arg: *mut c_void) -> i32;
 
         // call this instead of vc_dispman_init()
-        //pub fn vc_vchi_dispmanx_init(VCHI_INSTANCE_T initialise_instance, VCHI_CONNECTION_T **connections, uint32_t num_connections );
+        //pub fn vc_vchi_dispmanx_init(VCHI_INSTANCE_T initialise_instance, VCHI_CONNECTION_T **connections, u32 num_connections );
     }
 }
